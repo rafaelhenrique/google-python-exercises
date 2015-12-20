@@ -17,8 +17,16 @@
 # If the string length is less than 3, leave it unchanged.
 # Return the resulting string.
 def verbing(s):
-    # +++your code here+++
-    return
+    suffix = s[-3:]
+
+    if len(s) < 3:
+        suffix = ""
+    elif suffix != "ing":
+        suffix = "ing"
+    else:
+        suffix = "ly"
+
+    return '{}{}'.format(s, suffix)
 
 
 # E. not_bad
@@ -30,8 +38,21 @@ def verbing(s):
 # So 'This dinner is not that bad!' yields:
 # This dinner is good!
 def not_bad(s):
-    # +++your code here+++
-    return
+    # test(not_bad('This movie is not so bad'), 'This movie is good')
+    # test(not_bad('This dinner is not that bad!'), 'This dinner is good!')
+    # test(not_bad('This tea is not hot'), 'This tea is not hot')
+    # test(not_bad("It's bad yet not"), "It's bad yet not")
+    try:
+        phrase = s
+        idx_not = s.index("not")
+        idx_bad = s.index("bad") + 3
+        if idx_not < idx_bad:
+            phrase = s[:idx_not]
+            phrase += "good"
+            phrase += s[idx_bad:]
+    except ValueError:
+        pass
+    return phrase
 
 
 # F. front_back
@@ -42,8 +63,18 @@ def not_bad(s):
 # Given 2 strings, a and b, return a string of the form
 #  a-front + b-front + a-back + b-back
 def front_back(a, b):
-    # +++your code here+++
-    return
+    # test(front_back('abcd', 'xy'), 'abxcdy')
+    # test(front_back('abcde', 'xyz'), 'abcxydez')
+    # test(front_back('Kit te n', 'Don ut'), 'KitDontenut')
+    size_a = int(len(a)/2 + len(a)%2)
+    size_b = int(len(b)/2 + len(b)%2)
+
+    first_a, second_a = a[:size_a], a[size_a:]
+    first_b, second_b = b[:size_b], b[size_b:]
+
+    phrase = first_a + first_b
+    phrase += second_a + second_b
+    return phrase
 
 
 # Simple provided test() function used in main() to print
