@@ -6,10 +6,9 @@
 # Google's Python Class
 # http://code.google.com/edu/languages/google-python-class/
 
-import os
 import re
 import sys
-import urllib
+from urllib import request
 
 """Logpuzzle exercise
 Given an apache logfile, find the puzzle urls and download the images.
@@ -19,12 +18,29 @@ Here's what a puzzle url looks like:
 """
 
 
+def url_sort_key(url):
+    """Used to order the urls in increasing order by 2nd word if present."""
+    match = re.search(r'-(\w+)-(\w+)\.\w+', url)
+    if match:
+        return match.group(2)
+    else:
+        return url
+
+
 def read_urls(filename):
     """Returns a list of the puzzle urls from the given log file,
     extracting the hostname from the filename itself.
     Screens out duplicate urls and returns the urls sorted into
     increasing order."""
-    # +++your code here+++
+    host = filename.split('_')[-1]
+    urls = []
+    with open(filename, encoding="utf-8") as fp:
+        for line in fp.readlines():
+            logline = line.split()[6]
+            if re.search(r'.*puzzle.*', logline):
+                urls.append("http://{}{}".format(host, logline))
+    urls = list(set(urls))
+    return sorted(urls, key=url_sort_key)
 
 
 def download_images(img_urls, dest_dir):
@@ -35,7 +51,17 @@ def download_images(img_urls, dest_dir):
     with an img tag to show each local image file.
     Creates the directory if necessary.
     """
-    # +++your code here+++
+    img_count = 0
+    with open("{}/index.html".format(dest_dir), 'w') as f:
+        f.write("<html><head></head><body>")
+        for url in img_urls:
+            response = request.urlopen(url)
+            content = response.read()
+            with open("{}/img{}.jpg".format(dest_dir, img_count), 'wb') as fp:
+                fp.write(content)
+            f.write("<img src={}/img{}.jpg></img>".format(dest_dir, img_count))
+            img_count += 1
+        f.write("<body></html>")
 
 
 def main():
