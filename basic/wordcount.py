@@ -38,7 +38,33 @@ print_words() and print_top().
 """
 
 import sys
+from collections import defaultdict
 
+
+def count_word(filename):
+    with open(filename, encoding="utf-8") as fp:
+        wordlist = fp.read().split()
+        word_dict = defaultdict(int)
+        for word in wordlist:
+            word_dict[word.lower()] += 1
+    return word_dict
+
+
+def print_top(filename):
+    word_dict = count_word(filename)
+    word_sorted = reversed(sorted(zip(word_dict.values(), word_dict.keys())))
+    count = 0
+    for value, word in word_sorted:
+        if count == 20:
+            break
+        print("{}: {}".format(word, value))
+        count += 1
+
+
+def print_words(filename):
+    word_dict = count_word(filename)
+    for key, value in word_dict.items():
+        print("{}: {}".format(key, value))
 
 # +++your code here+++
 # Define print_words(filename) and print_top(filename) functions.
@@ -50,6 +76,8 @@ import sys
 
 # This basic command line argument parsing code is provided and
 # calls the print_words() and print_top() functions which you must define.
+
+
 def main():
     if len(sys.argv) != 3:
         print('usage: ./wordcount.py {--count | --topcount} file')
