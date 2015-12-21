@@ -37,12 +37,32 @@ Suggested milestones for incremental development:
 
 def extract_names(filename):
     """
-    Given a file name for baby.html, returns a list starting with the year string
-    followed by the name-rank strings in alphabetical order.
+    Given a file name for baby.html, returns a list starting with
+    the year string followed by the name-rank strings in alphabetical order.
     ['2006', 'Aaliyah 91', Aaron 57', 'Abagail 895', ' ...]
     """
-    # +++your code here+++
-    return
+    year_regex = re.compile(r'<h3 align="center">Popularity in ([0-9]+)</h3>')
+    name_regex = re.compile(
+        r'<tr align="right"><td>([0-9]+)</td>'
+        r'<td>([A-Za-z]+)</td><td>([A-Za-z]+)</td>')
+
+    output = []
+    with open(filename, encoding="utf-8") as fp:
+        for line in fp.readlines():
+            year = year_regex.match(line)
+            rank_name = name_regex.match(line)
+            if year:
+                year = year.group(1)
+                output.append(year)
+            if rank_name:
+                rank = rank_name.group(1)
+                male = rank_name.group(2)
+                female = rank_name.group(3)
+                output.append("{} {}".format(male, rank))
+                output.append("{} {}".format(female, rank))
+    output = [output[0]] + sorted(output[1:])
+    print(output)
+    return output
 
 
 def main():
@@ -56,15 +76,10 @@ def main():
         sys.exit(1)
 
     # Notice the summary flag and remove it from args if it is present.
-    summary = False
     if args[0] == '--summaryfile':
-        summary = True
         del args[0]
-
-        # +++your code here+++
-        # For each filename, get the names, then either print the text output
-        # or write it to a summary file
-
+        for arg in args:
+            extract_names(arg)
 
 if __name__ == '__main__':
     main()
