@@ -43,29 +43,48 @@ columns, so the output looks better.
 
 import random
 import sys
+from collections import defaultdict
 
 
 def mimic_dict(filename):
-  """Returns mimic dict mapping each word to list of words which follow it."""
-  # +++your code here+++
-  return
+    """
+    Returns mimic dict mapping each word to list of words which follow it.
+    """
+    with open(filename, encoding="utf-8") as fp:
+        wordlist = fp.read().split()
+        mimic = defaultdict(list)
+        size_wordlist = len(wordlist) - 1
+
+        for word in wordlist:
+            indexes = [i+1 for i, x in enumerate(wordlist) if x == word]
+            for index in indexes:
+                if index <= size_wordlist:
+                    mimic[word].append(wordlist[index])
+    return mimic
 
 
 def print_mimic(mimic_dict, word):
-  """Given mimic dict and start word, prints 200 random words."""
-  # +++your code here+++
-  return
+    """Given mimic dict and start word, prints 200 random words."""
+    if word == "":
+        word = random.choice([key for key in mimic_dict.keys()])
+
+    phrase = ""
+    for _ in range(0, 99):
+        phrase += "{} {} ".format(word, random.choice(mimic_dict[word]))
+        word = random.choice([key for key in mimic_dict.keys()])
+
+    print(phrase)
 
 
 # Provided main(), calls mimic_dict() and mimic()
 def main():
-  if len(sys.argv) != 2:
-    print('usage: ./mimic.py file-to-read')
-    sys.exit(1)
+    if len(sys.argv) != 2:
+        print('usage: ./mimic.py file-to-read')
+        sys.exit(1)
 
-  dict = mimic_dict(sys.argv[1])
-  print_mimic(dict, '')
+    dict = mimic_dict(sys.argv[1])
+    print_mimic(dict, '')
 
 
 if __name__ == '__main__':
-  main()
+    main()
